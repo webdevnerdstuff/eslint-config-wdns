@@ -1,5 +1,5 @@
 {
-  "name": "eslint-config-wdns",
+  "name": "@wdns/eslint-config-wdns",
   "version": "0.0.0",
   "description": "WebDevNerdStuff Eslint Config",
   "main": "index.js.mjs",
