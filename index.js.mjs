@@ -3,7 +3,6 @@ import eslint from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import pluginVue from 'eslint-plugin-vue';
 import prettier from 'eslint-plugin-prettier';
-import AutoImportJson from "./.eslintrc-auto-import.json" assert { type: "json" };
 import globals from 'globals';
 
 
@@ -27,7 +26,6 @@ export default [
     name: 'app/js-files-to-lint',
     files: ['**/*.{js,mjs,jsx,ts,mts,tsx,vue}'],
     languageOptions: {
-      ...AutoImportJson,
       ecmaVersion: 'latest',
       globals: {
         ...globals.node,
