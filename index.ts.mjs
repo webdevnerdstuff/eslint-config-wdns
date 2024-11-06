@@ -3,9 +3,8 @@ import tseslint from 'typescript-eslint';
 import typescript from '@typescript-eslint/eslint-plugin';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 
-export default tseslint.config(
+export default [
   ...wdnsConfig,
-  ...tseslint.configs.recommended,
   ...vueTsEslintConfig(),
 
   {
@@ -55,4 +54,4 @@ export default tseslint.config(
       },
     },
   },
-);
+];
