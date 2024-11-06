@@ -6,8 +6,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "index.js.mjs",
-  "module": "index.ts.mjs",
+  "main": "index.ts.mjs",
   "type": "module",
   "author": "WebDevNerdStuff & Bunnies... lots and lots of bunnies! <webdevnerdstuff@gmail.com> (https://webdevnerdstuff.com)",
   "funding": [
