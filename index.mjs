@@ -10,7 +10,6 @@ import vueTsEslintConfig from '@vue/eslint-config-typescript';
 
 
 export default [
-  eslint.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   ...vueTsEslintConfig(),
 
@@ -32,24 +31,15 @@ export default [
     name: 'app/wdns-files-to-lint',
     files: ['**/*.{js,mjs,jsx,ts,mts,tsx,vue}'],
     languageOptions: {
-      ecmaVersion: 'latest',
-      globals: {
+       globals: {
         ...globals.node,
         ...globals.browser,
-      },
-      sourceType: 'module',
-      parserOptions: {
-        parser: tseslint.parser,
-        project: './tsconfig.json',
-        extraFileExtensions: ['.vue'],
-        sourceType: 'module',
       },
     },
     plugins: {
       import: importPlugin,
       pluginVue,
       prettier,
-      'typescript-eslint': tseslint.plugin,
     },
     rules: {
       // ESLint rules //
@@ -306,14 +296,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 0,
       '@typescript-eslint/no-unsafe-assignment': 0,
       '@typescript-eslint/no-unsafe-member-access': 0,
-    },
-    settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          project: './tsconfig.json',
-        },
-      },
     },
   },
 ];
