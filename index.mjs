@@ -4,7 +4,6 @@ import globals from 'globals';
 import importPlugin from 'eslint-plugin-import';
 import pluginVue from 'eslint-plugin-vue';
 import prettier from 'eslint-plugin-prettier';
-import tseslint from 'typescript-eslint';
 import typescript from '@typescript-eslint/eslint-plugin';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
 
