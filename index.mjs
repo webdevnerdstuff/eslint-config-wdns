@@ -28,7 +28,7 @@ export default [
 
   {
     name: 'app/wdns-files-to-lint',
-    files: ['**/*.{js,mjs,jsx,ts,mts,tsx,vue}'],
+    files: ['**/*.{ts,mts,tsx,vue}'],
     languageOptions: {
        globals: {
         ...globals.node,
