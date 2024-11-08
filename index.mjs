@@ -4,9 +4,9 @@ import globals from 'globals';
 import importPlugin from 'eslint-plugin-import';
 import pluginVue from 'eslint-plugin-vue';
 import prettier from 'eslint-plugin-prettier';
-import tseslint from 'typescript-eslint';
 import typescript from '@typescript-eslint/eslint-plugin';
 import vueTsEslintConfig from '@vue/eslint-config-typescript';
+import tseslint from 'typescript-eslint';
 
 
 export default [
@@ -34,11 +34,6 @@ export default [
 			globals: {
 				...globals.node,
 				...globals.browser,
-			},
-			parserOptions: {
-				parser: tseslint.parser,
-				extraFileExtensions: ['.vue'],
-				sourceType: 'module',
 			},
 		},
 		plugins: {
@@ -293,7 +288,7 @@ export default [
 
 			// TypeScript rules //
 			...typescript.configs.recommended.rules,
-			...typescript.configs['recommended-type-checked'].rules,
+			...tseslint.configs.recommendedTypeChecked.rules,
 
 			'@typescript-eslint/ban-ts-comment': 0,
 			'@typescript-eslint/no-empty-function': 0,
