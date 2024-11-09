@@ -26,7 +26,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuetifyjs/eslint-config-vuetify.git"
+    "url": "git@github.com:webdevnerdstuff/eslint-config-wdns.git"
   },
   "keywords": [
     "eslint",
