@@ -13,10 +13,10 @@ pnpm add -D eslint-config-wdns
 Update your `eslint.config.js` flat config to _extend_ wdns:
 
 ```js
-import wdns from 'eslint-config-wdns';
+import wdnsConfig from 'eslint-config-wdns';
 
 export default [
-  ...wdns,
+  ...wdnsConfig,
 ]
 ```
 
@@ -24,4 +24,4 @@ export default [
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2024-present WebDevNerdStuf
+Copyright (c) 2024-present WebDevNerdStuff
