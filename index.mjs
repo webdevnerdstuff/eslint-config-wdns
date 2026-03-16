@@ -163,7 +163,7 @@ export default [
 			'object-curly-newline': ['error', {
 				ExportDeclaration: { multiline: true },
 				ImportDeclaration: { multiline: true },
-				ObjectExpression: { multiline: true },
+				ObjectExpression: 'ignore',
 				ObjectPattern: { multiline: true },
 			}],
 			'operator-linebreak': ['error', 'after'],
