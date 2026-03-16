@@ -1,6 +1,6 @@
 {
   "name": "@wdns/eslint-config-wdns",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "WebDevNerdStuff Eslint Config",
   "private": false,
   "publishConfig": {
