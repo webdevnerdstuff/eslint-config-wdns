@@ -161,7 +161,10 @@ export default [
 			'no-unused-vars': 1,
 			'no-useless-escape': 0,
 			'object-curly-newline': ['error', {
-				ObjectPattern: { multiline: false },
+				ExportDeclaration: { multiline: true },
+				ImportDeclaration: { multiline: true },
+				ObjectExpression: { multiline: true },
+				ObjectPattern: { multiline: true },
 			}],
 			'operator-linebreak': ['error', 'after'],
 			'prefer-destructuring': [
