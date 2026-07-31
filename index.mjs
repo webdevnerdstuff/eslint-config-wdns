@@ -1,17 +1,26 @@
 // eslint.config.js
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import eslint from '@eslint/js';
 import globals from 'globals';
-import importPlugin from 'eslint-plugin-import';
-import pluginVue from 'eslint-plugin-vue';
-import prettier from 'eslint-plugin-prettier';
-import typescript from '@typescript-eslint/eslint-plugin';
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
+import importX from 'eslint-plugin-import-x';
+import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
+import vue from 'eslint-plugin-vue';
 
 
-export default [
-	...pluginVue.configs['flat/essential'],
-	...vueTsEslintConfig(),
+// `typescript-eslint`'s presets ship with no `files` scope, so every one of their
+// rules applies to plain JS too -- while the overrides below, which are scoped to
+// the lint glob, do not. Derived from the plugin registry so it can't drift.
+const typescriptRulesOff = Object.fromEntries(
+	Object.entries(tseslint.plugin.rules)
+		.filter(([, rule]) => !rule.meta?.deprecated)
+		.map(([name]) => [`@typescript-eslint/${name}`, 0]),
+);
+
+
+export default defineConfigWithVueTs(
+	vue.configs['flat/essential'],
+	vueTsConfigs.recommended,
 
 	{
 		name: 'app/wdns-files-to-ignore',
@@ -29,7 +38,7 @@ export default [
 
 	{
 		name: 'app/wdns-files-to-lint',
-		files: ['**/*.{ts,mts,tsx,vue}'],
+		files: ['**/*.{mjs,ts,mts,tsx,vue}'],
 		languageOptions: {
 			globals: {
 				...globals.node,
@@ -37,109 +46,24 @@ export default [
 			},
 		},
 		plugins: {
-			import: importPlugin,
-			pluginVue,
-			prettier,
+			'@stylistic': stylistic,
+			// Registered under the `import` key (not `import-x`) so rule names and
+			// consumer overrides stay `import/*`.
+			import: importX,
 		},
 		rules: {
 			// ESLint rules //
 			...eslint.configs.recommended.rules,
 
-			'arrow-spacing': ['error', { after: true, before: true }],
-			'brace-style': ['error', 'stroustrup'],
-			'comma-dangle': ['error', 'always-multiline'],
 			'default-case': [
 				'error', {
 					commentPattern: '^skip\\sdefault',
 				},
 			],
 			'func-names': ['error', 'never'],
-			'function-paren-newline': 0,
-			'implicit-arrow-linebreak': ['warn', 'beside'],
-			"import/order": [
-				"error",
-				{
-					"groups": [
-						"builtin",
-						"external",
-						"type",
-						"internal",
-						"parent",
-						"sibling",
-						"index",
-					],
-					"pathGroups": [
-						{
-							"pattern": "@",
-							"group": "internal"
-						},
-						{
-							"pattern": "@Libraries/**",
-							"group": "internal"
-						},
-						{
-							"pattern": "@Layouts/**",
-							"group": "internal"
-						},
-						{
-							"pattern": "@Components/Layouts/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Components/Elements/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Components/Pages/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Components/EasterEggs/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Composables/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Plugins/*",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Stores/**",
-							"group": "internal",
-							"position": "before"
-						},
-						{
-							"pattern": "@Types/**",
-							"group": "type"
-						},
-					],
-					"pathGroupsExcludedImportTypes":
-						["internal"],
-					"alphabetize": {
-						"order": "asc",
-						"caseInsensitive": true
-					}
-				}
-			],
-			'import/no-extraneous-dependencies': ['error', { 'devDependencies': true }],
-			'import/no-self-import': 0,
-			'import/prefer-default-export': 0,
-			indent: [2, 'tab', { SwitchCase: 1 }],
-			'linebreak-style': 0,
-			'max-len': 0,
-
 			'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
 			'no-debugger': 0,
 			'no-else-return': ['error', { allowElseIf: true }],
-			'no-multiple-empty-lines': ['error', { 'max': 2, 'maxEOF': 0 }],
 			'no-new': 0,
 			'no-param-reassign': [
 				'error', {
@@ -150,7 +74,6 @@ export default [
 			'no-plusplus': [
 				'error', { allowForLoopAfterthoughts: true },
 			],
-			'no-tabs': [0, { allowIndentationTabs: true }],
 			'no-undef': 'off',
 			'no-underscore-dangle': [
 				'error', {
@@ -160,12 +83,6 @@ export default [
 			],
 			'no-unused-vars': 1,
 			'no-useless-escape': 0,
-			'object-curly-newline': ['error', {
-				ExportDeclaration: { multiline: true },
-				ImportDeclaration: { multiline: true },
-				ObjectPattern: { multiline: true },
-			}],
-			'operator-linebreak': ['error', 'after'],
 			'prefer-destructuring': [
 				'error', {
 					array: false,
@@ -175,8 +92,6 @@ export default [
 					enforceForRenamedProperties: false,
 				},
 			],
-			'quotes': ['error', 'single', { avoidEscape: true }],
-			'semi': ['error', 'always'],
 			'sort-imports': ['error', {
 				'allowSeparatedGroups': true,
 				'ignoreCase': false,
@@ -189,11 +104,113 @@ export default [
 					'multiple',
 				],
 			}],
-			'space-before-function-paren': ['error', {
+
+			// Stylistic rules //
+			// Previously the core formatting rules, deprecated by ESLint and frozen
+			// since v8.53. Moved to @stylistic so they stay maintained past ESLint v10.
+			'@stylistic/arrow-spacing': ['error', { after: true, before: true }],
+			'@stylistic/brace-style': ['error', 'stroustrup'],
+			'@stylistic/comma-dangle': ['error', 'always-multiline'],
+			'@stylistic/function-paren-newline': 0,
+			'@stylistic/implicit-arrow-linebreak': ['warn', 'beside'],
+			'@stylistic/indent': [2, 'tab', { SwitchCase: 1 }],
+			'@stylistic/linebreak-style': 0,
+			'@stylistic/max-len': 0,
+			'@stylistic/no-multiple-empty-lines': ['error', { 'max': 2, 'maxEOF': 0 }],
+			'@stylistic/no-tabs': [0, { allowIndentationTabs: true }],
+			'@stylistic/object-curly-newline': ['error', {
+				ExportDeclaration: { multiline: true },
+				ImportDeclaration: { multiline: true },
+				ObjectPattern: { multiline: true },
+			}],
+			'@stylistic/operator-linebreak': ['error', 'after'],
+			'@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
+			'@stylistic/semi': ['error', 'always'],
+			'@stylistic/space-before-function-paren': ['error', {
 				anonymous: 'never',
 				asyncArrow: 'always',
 				named: 'never',
 			}],
+
+			// Import rules //
+			'import/no-extraneous-dependencies': ['error', { 'devDependencies': true }],
+			'import/no-self-import': 0,
+			'import/order': [
+				'error',
+				{
+					'groups': [
+						'builtin',
+						'external',
+						'type',
+						'internal',
+						'parent',
+						'sibling',
+						'index',
+					],
+					'pathGroups': [
+						{
+							'pattern': '@',
+							'group': 'internal'
+						},
+						{
+							'pattern': '@Libraries/**',
+							'group': 'internal'
+						},
+						{
+							'pattern': '@Layouts/**',
+							'group': 'internal'
+						},
+						{
+							'pattern': '@Components/Layouts/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Components/Elements/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Components/Pages/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Components/EasterEggs/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Composables/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Plugins/*',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Stores/**',
+							'group': 'internal',
+							'position': 'before'
+						},
+						{
+							'pattern': '@Types/**',
+							'group': 'type'
+						},
+					],
+					'pathGroupsExcludedImportTypes':
+						['internal'],
+					'alphabetize': {
+						'order': 'asc',
+						'caseInsensitive': true
+					}
+				}
+			],
+			'import/prefer-default-export': 0,
+
+			// Vue rules //
 			'vue/attributes-order': ['error', {
 				'alphabetical': true,
 				'order': [
@@ -210,7 +227,8 @@ export default [
 					'CONTENT',
 				],
 			}],
-			'vue/component-tags-order': ['error', {
+			// Replaces `vue/component-tags-order`, removed in eslint-plugin-vue v10.
+			'vue/block-order': ['error', {
 				'order': ['template', 'script', 'style'],
 			}],
 			'vue/html-closing-bracket-newline': 0,
@@ -289,20 +307,32 @@ export default [
 			}],
 
 			// TypeScript rules //
-			...typescript.configs.recommended.rules,
-			...tseslint.configs.recommendedTypeChecked.rules,
-
+			// The base recommended set comes from `vueTsConfigs.recommended` above.
 			'@typescript-eslint/ban-ts-comment': 0,
 			'@typescript-eslint/no-empty-function': 0,
 			'@typescript-eslint/no-empty-object-type': 0,
 			'@typescript-eslint/no-explicit-any': 0,
+			'@typescript-eslint/no-unsafe-assignment': 0,
+			'@typescript-eslint/no-unsafe-member-access': 0,
 			'@typescript-eslint/no-unused-vars': ['error', {
 				argsIgnorePattern: '^_',
 				caughtErrorsIgnorePattern: '^_',
 				varsIgnorePattern: '^_',
 			}],
-			'@typescript-eslint/no-unsafe-assignment': 0,
-			'@typescript-eslint/no-unsafe-member-access': 0,
 		},
 	},
-];
+
+	{
+		// Plain JS is out of scope for this config -- but the typescript-eslint
+		// presets would otherwise half-lint it (TS rules on, our overrides off).
+		// Leave those files genuinely alone.
+		name: 'app/wdns-javascript-opt-out',
+		files: ['**/*.{js,cjs}'],
+		languageOptions: {
+			globals: {
+				...globals.commonjs,
+			},
+		},
+		rules: typescriptRulesOff,
+	},
+);
