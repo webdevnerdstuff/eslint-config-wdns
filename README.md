@@ -17,11 +17,25 @@ pnpm add -D @wdns/eslint-config-wdns eslint
 
 ### 🚀 Usage
 
-Update your `eslint.config.js` flat config to _extend_ wdns:
+Update your `eslint.config.mjs` flat config to _extend_ wdns:
 
 ```js
+import { defineConfig } from 'eslint/config';
 import wdnsConfig from '@wdns/eslint-config-wdns';
 
+export default defineConfig(
+  wdnsConfig,
+  {
+    // your overrides
+  },
+);
+```
+
+`defineConfig` ships with ESLint 10 itself — it replaces the deprecated
+`tseslint.config()` helper. The config is still a plain array, so spreading it
+works too if you prefer:
+
+```js
 export default [
   ...wdnsConfig,
 ]

@@ -148,6 +148,21 @@ describe('typescript', () => {
 	it('allows _-prefixed unused vars', async () => {
 		expect(await rulesFiredFor('underscore.ts')).not.toContain('@typescript-eslint/no-unused-vars');
 	});
+
+	// Regression: v2.0.0 re-enabled the core rule, which reports every named
+	// parameter in an interface method signature as unused. Unused-variable
+	// checking belongs to @typescript-eslint/no-unused-vars alone.
+	it('leaves the core no-unused-vars off so declaration contexts are not flagged', async () => {
+		expect(await rulesFiredFor('interface.ts')).toEqual([]);
+	});
+
+	it('does not enable both no-unused-vars implementations at once', async () => {
+		const active = await linter.calculateConfigForFile(`${FIXTURES}clean.ts`);
+		const severity = (v: unknown) => (Array.isArray(v) ? v[0] : v);
+
+		expect(severity(active.rules['no-unused-vars'])).toBe(0);
+		expect(severity(active.rules['@typescript-eslint/no-unused-vars'])).toBe(2);
+	});
 });
 
 describe('vue', () => {

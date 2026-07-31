@@ -81,7 +81,10 @@ export default defineConfigWithVueTs(
 					allowAfterThis: true,
 				},
 			],
-			'no-unused-vars': 1,
+			// Off in favour of @typescript-eslint/no-unused-vars below. The core rule
+			// cannot see TypeScript declaration contexts and reports every named
+			// parameter in an interface method signature as unused.
+			'no-unused-vars': 0,
 			'no-useless-escape': 0,
 			'prefer-destructuring': [
 				'error', {
